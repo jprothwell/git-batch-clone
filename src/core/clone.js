@@ -33,7 +33,7 @@ function doJob(repoName, repoPath, localBranch, remoteBranch, rBranch, dirname) 
         global.decho.log(chalk.green('克隆 '), `${repoName}`);
         return doClone(repoName, repoPath, dirname)
         .then(function(){
-          if (localBranch !== 'master') {
+          if (localBranch !== 'master' && localBranch !== 'main') {
             global.decho.log(chalk.yellow(`配置的默认分支为 ${localBranch} 非 master 分支，需要检出`));
             global.decho.log(chalk.green('检出 '), `${repoName} 分支：${localBranch} ${remoteBranch}`);
             return doCheckout(repoName, repoPath, remoteBranch, localBranch).then(function(){

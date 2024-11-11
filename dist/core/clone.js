@@ -3,9 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 exports.default = clone;
 
 var _async = require('async');
@@ -66,7 +63,7 @@ function doJob(repoName, repoPath, localBranch, remoteBranch, rBranch, dirname) 
       } else {
         global.decho.log(_chalk2.default.green('克隆 '), '' + repoName);
         return (0, _git.doClone)(repoName, repoPath, dirname).then(function () {
-          if (localBranch !== 'master') {
+          if (localBranch !== 'master' && localBranch !== 'main') {
             global.decho.log(_chalk2.default.yellow('\u914D\u7F6E\u7684\u9ED8\u8BA4\u5206\u652F\u4E3A ' + localBranch + ' \u975E master \u5206\u652F\uFF0C\u9700\u8981\u68C0\u51FA'));
             global.decho.log(_chalk2.default.green('检出 '), repoName + ' \u5206\u652F\uFF1A' + localBranch + ' ' + remoteBranch);
             return (0, _git.doCheckout)(repoName, repoPath, remoteBranch, localBranch).then(function () {
@@ -103,27 +100,21 @@ function clone(dirname, spaceInfo) {
     if (repos && repos.length > 0) {
       _async2.default.eachSeries(repos, function (pj, callback) {
         if (pj) {
-          var _ret = function () {
-            var repoName = (pj.host || spaceGlobal.host).replace(/\/$/, '') + '\/' + pj.repo.replace(/\.git$/i, '') + ".git";
-            var repoPath = _path2.default.join(dirname, pj.mapping || _path2.default.basename(pj.repo.replace(/\.git$/i, '') + '.git', '.git'));
-            var localBranch = pj.branch && pj.branch.local ? pj.branch.local : spaceGlobal.branch.local;
-            var remoteBranch = pj.branch && pj.branch.remote ? pj.branch.remote : spaceGlobal.branch.remote;
-            var rBranch = new RegExp('\\*\\s' + localBranch + '\\b', 'm');
+          var repoName = (pj.host || spaceGlobal.host).replace(/\/$/, '') + '\/' + pj.repo.replace(/\.git$/i, '') + ".git";
+          var repoPath = _path2.default.join(dirname, pj.mapping || _path2.default.basename(pj.repo.replace(/\.git$/i, '') + '.git', '.git'));
+          var localBranch = pj.branch && pj.branch.local ? pj.branch.local : spaceGlobal.branch.local;
+          var remoteBranch = pj.branch && pj.branch.remote ? pj.branch.remote : spaceGlobal.branch.remote;
+          var rBranch = new RegExp('\\*\\s' + localBranch + '\\b', 'm');
 
-            return {
-              v: doJob(repoName, repoPath, localBranch, remoteBranch, rBranch, dirname).then(function () {
-                var gitConfigs = (0, _deepAssign2.default)(spaceGlobal.config, pj.config);
-                return (0, _git.doConfigs)(gitConfigs, repoPath);
-              }).then(function () {
-                callback();
-              }).catch(function (err) {
-                reject(err);
-                callback();
-              })
-            };
-          }();
-
-          if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+          return doJob(repoName, repoPath, localBranch, remoteBranch, rBranch, dirname).then(function () {
+            var gitConfigs = (0, _deepAssign2.default)(spaceGlobal.config, pj.config);
+            return (0, _git.doConfigs)(gitConfigs, repoPath);
+          }).then(function () {
+            callback();
+          }).catch(function (err) {
+            reject(err);
+            callback();
+          });
         } else {
           callback();
         }
