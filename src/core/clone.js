@@ -36,15 +36,28 @@ function doJob(repoName, repoPath, localBranch, remoteBranch, rBranch, dirname) 
         global.decho.log(chalk.green('克隆 '), `${repoName}`);
         return doClone(repoName, repoPath, dirname)
         .then(function(){
-          if (localBranch !== 'master' && localBranch !== 'main') {
-            global.decho.log(chalk.yellow(`配置的默认分支为 ${localBranch} 非 master 分支，需要检出`));
-            global.decho.log(chalk.green('检出 '), `${repoName} 分支：${localBranch} ${remoteBranch}`);
-            return doCheckout(repoName, repoPath, remoteBranch, localBranch).then(function(){
+          // if (localBranch !== 'master' && localBranch !== 'main') {
+          //   global.decho.log(chalk.yellow(`配置的默认分支为 ${localBranch} 非 master 分支，需要检出`));
+          //   global.decho.log(chalk.green('检出 '), `${repoName} 分支：${localBranch} ${remoteBranch}`);
+          //   return doCheckout(repoName, repoPath, remoteBranch, localBranch).then(function(){
+          //     resolve();
+          //   });
+          // } else {
+          //   resolve();
+          // }
+          doCheckout(repoName, repoPath, 'origin/master', 'master').then(function(){
+            global.decho.log(chalk.yellow(`尝试检出 master 分支成功`));
+            resolve();
+          }).catch(function(err){
+            global.decho.log(chalk.yellow(`检出 master 分支失败`));
+            doCheckout(repoName, repoPath, 'origin/main', 'main').then(function(){
+              global.decho.log(chalk.yellow(`尝试检出 main 分支成功`));
+              resolve();
+            }).catch(function(err){
+              global.decho.log(chalk.yellow(`检出 main 分支失败`));
               resolve();
             });
-          } else {
-            resolve();
-          }
+          })
         });
       }
     } else {

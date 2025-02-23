@@ -66,15 +66,28 @@ function doJob(repoName, repoPath, localBranch, remoteBranch, rBranch, dirname) 
       } else {
         global.decho.log(_chalk2.default.green('克隆 '), '' + repoName);
         return (0, _git.doClone)(repoName, repoPath, dirname).then(function () {
-          if (localBranch !== 'master' && localBranch !== 'main') {
-            global.decho.log(_chalk2.default.yellow('\u914D\u7F6E\u7684\u9ED8\u8BA4\u5206\u652F\u4E3A ' + localBranch + ' \u975E master \u5206\u652F\uFF0C\u9700\u8981\u68C0\u51FA'));
-            global.decho.log(_chalk2.default.green('检出 '), repoName + ' \u5206\u652F\uFF1A' + localBranch + ' ' + remoteBranch);
-            return (0, _git.doCheckout)(repoName, repoPath, remoteBranch, localBranch).then(function () {
+          // if (localBranch !== 'master' && localBranch !== 'main') {
+          //   global.decho.log(chalk.yellow(`配置的默认分支为 ${localBranch} 非 master 分支，需要检出`));
+          //   global.decho.log(chalk.green('检出 '), `${repoName} 分支：${localBranch} ${remoteBranch}`);
+          //   return doCheckout(repoName, repoPath, remoteBranch, localBranch).then(function(){
+          //     resolve();
+          //   });
+          // } else {
+          //   resolve();
+          // }
+          (0, _git.doCheckout)(repoName, repoPath, 'origin/master', 'master').then(function () {
+            global.decho.log(_chalk2.default.yellow('\u5C1D\u8BD5\u68C0\u51FA master \u5206\u652F\u6210\u529F'));
+            resolve();
+          }).catch(function (err) {
+            global.decho.log(_chalk2.default.yellow('\u68C0\u51FA master \u5206\u652F\u5931\u8D25'));
+            (0, _git.doCheckout)(repoName, repoPath, 'origin/main', 'main').then(function () {
+              global.decho.log(_chalk2.default.yellow('\u5C1D\u8BD5\u68C0\u51FA main \u5206\u652F\u6210\u529F'));
+              resolve();
+            }).catch(function (err) {
+              global.decho.log(_chalk2.default.yellow('\u68C0\u51FA main \u5206\u652F\u5931\u8D25'));
               resolve();
             });
-          } else {
-            resolve();
-          }
+          });
         });
       }
     } else {
