@@ -78,7 +78,7 @@ export function doCheckout(repoName, repoPath, remoteBranch, localBranch) {
 
 export function doClone(repoName, repoPath, rootPath) {
   return new Promise(function(resolve, reject){
-    let _clone = childProcess.spawn(`git`, ['clone', '-b', 'master', repoName, repoPath], {
+    let _clone = childProcess.spawn(`git`, ['clone', repoName, repoPath], {
       cwd: rootPath,
       stdio: 'inherit'
     });
