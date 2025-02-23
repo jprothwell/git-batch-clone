@@ -1,6 +1,6 @@
 {
   "name": "git-batch-clone",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "This is a cmd tool, that helps you to clone and config multiple git repos into a specified folder structure.",
   "main": "dist/gitbatch.js",
   "bin": {
