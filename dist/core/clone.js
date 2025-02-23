@@ -51,14 +51,17 @@ function doJob(repoName, repoPath, localBranch, remoteBranch, rBranch, dirname) 
       if (_fs2.default.existsSync(repoPath)) {
         return (0, _git.doBranch)(repoPath).then(function (stdout) {
           global.decho.log(_chalk2.default.green('更新 '), '' + repoName);
-          if (rBranch.test(stdout)) {
-            return (0, _git.doPull)(repoName, repoPath).then(function () {
-              resolve();
-            });
-          } else {
-            global.decho.log(_chalk2.default.yellow('警告 '), repoName, '不是 ' + localBranch + ' 分支， 跳过更新。');
+          // if (rBranch.test(stdout)) {
+          //   return doPull(repoName, repoPath).then(function(){
+          //     resolve();
+          //   });
+          // } else {
+          //   global.decho.log(chalk.yellow('警告 '), repoName, '不是 ' + localBranch + ' 分支， 跳过更新。');
+          //   resolve();
+          // }
+          return (0, _git.doPull)(repoName, repoPath).then(function () {
             resolve();
-          }
+          });
         });
       } else {
         global.decho.log(_chalk2.default.green('克隆 '), '' + repoName);

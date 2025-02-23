@@ -104,7 +104,7 @@ function doCheckout(repoName, repoPath, remoteBranch, localBranch) {
 
 function doClone(repoName, repoPath, rootPath) {
   return new _promise2.default(function (resolve, reject) {
-    var _clone = _child_process2.default.spawn('git', ['clone', '-b', 'master', repoName, repoPath], {
+    var _clone = _child_process2.default.spawn('git', ['clone', repoName, repoPath], {
       cwd: rootPath,
       stdio: 'inherit'
     });
